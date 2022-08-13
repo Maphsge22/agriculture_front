@@ -69,7 +69,7 @@ export default {
         },
         {
           icon: "el-icon-data-analysis",
-          index: "analyze",
+          index: "history",
           title: "历史数据分析",
         },
         {

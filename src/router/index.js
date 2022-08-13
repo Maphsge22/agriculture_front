@@ -38,23 +38,23 @@ const routes = [{
             window.open("http://localhost:8848/nacos");
         }
     }, {
-        path: "/analyze",
-        name: "analyze",
+        path: "/history",
+        name: "history",
         meta: {
-            title: '数据分析'
+            title: '历史数据分析'   // 这个title是浏览器的标签title
         },
         component: () =>
             import(
-                "../views/Analyze.vue")
+                "../views/History.vue")
     }, {
         path: "/bar",
         name: "bar",
         meta: {
-            title: 'bar'
+            title: '阈值查询与修改'
         },
         component: () =>
             import(
-                "../views/TbCell.vue")
+                "../views/Value.vue")
     }, {
         path: '/404',
         name: '404',

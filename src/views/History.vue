@@ -3,7 +3,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-user-solid"></i> 用户管理
+          <i class="el-icon-user-solid"></i> 历史数据分析
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -19,19 +19,7 @@
           >批量删除
           </el-button
           >
-          <el-form-item label="新建用户：">
-            <el-input v-model="formdata.username" placeholder="账号"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-input v-model="formdata.password" placeholder="密码"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-checkbox v-model="formdata.type" disabled>管理员</el-checkbox>
-          </el-form-item>
-          <el-button type="primary" icon="el-icon-edit" @click="handleRegister"
-          >添加用户
-          </el-button
-          >
+
           <el-button
               type="info"
               icon="el-icon-refresh"
@@ -56,57 +44,20 @@
             align="center"
         ></el-table-column>
         <el-table-column
-            prop="id"
-            label="ID"
-            width="55"
+            prop="equipmentId"
+            label="设备ID"
+            width="105"
             align="center"
         ></el-table-column>
-        <el-table-column prop="username" label="用户名"></el-table-column>
-        <el-table-column label="账户类型">
-          <template #default="scope"
-          >
-            <el-tag
-                :type="
-                scope.row.type === 1
-                  ? 'success'
-                  : scope.row.type === 0
-                  ? 'danger'
-                  : ''
-              "
-            >{{ scope.row.type ? "普通用户" : "管理员" }}
-            </el-tag
-            >
-          </template
-          >
-        </el-table-column>
-        <el-table-column label="状态" align="center">
-          <template #default="scope">
-            <el-tag
-                :type="
-                scope.row.verification === 1
-                  ? 'success'
-                  : scope.row.verification === 0
-                  ? 'danger'
-                  : ''
-              "
-            >{{ scope.row.verification ? "已验证" : "待验证" }}
-            </el-tag
-            >
-          </template>
-        </el-table-column>
+        <el-table-column prop="recordTime" label="采集时间" align="center"></el-table-column>
+        <el-table-column prop="temp" label="温度" align="center"></el-table-column>
+        <el-table-column prop="humidity" label="湿度" align="center"></el-table-column>
+        <el-table-column prop="motor" label="电机" align="center"></el-table-column>
+        <el-table-column prop="valve" label="水阀" align="center"></el-table-column>
 
         <!-- <el-table-column prop="date" label="注册时间"></el-table-column> -->
         <el-table-column label="操作" width="180" align="center">
           <template #default="scope">
-            <el-button
-                v-if="!scope.row.verification"
-                type="text"
-                icon="el-icon-check"
-                class="green"
-                @click="handleVerify(scope.$index, scope.row)"
-            >通过
-            </el-button
-            >
             <el-button
                 type="text"
                 icon="el-icon-delete"
@@ -137,69 +88,20 @@ export default {
       idx: -1,
       id: -1,
       currentDate: new Date(),
-      formdata: {
-        username: "",
-        password: "",
-      },
+
     };
   },
   created() {
     this.getData();
   },
   methods: {
-    handleRegister() {
-      request({
-        url: `${BACKEND}/dataservice/account/register?username=${this.formdata.username}&password=${this.formdata.password}`,
-        method: "post",
-      })
-          .then((response) => {
-            if (response.success === true) {
-              this.$message.success("注册成功");
-              return true;
-            } else {
-              this.$message.error(response.message);
-              return false;
-            }
-          })
-          .then((success) => {
-            if (!success) {
-              this.getData();
-              return;
-            }
-            request({
-              url: `${BACKEND}/dataservice/account/verify?username=${this.formdata.username}`,
-              method: "post",
-            }).then((response) => {
-              if (response.success) {
-                this.$message.success("自动验证成功");
-              } else {
-                this.$message.error(response.message);
-              }
-              this.getData();
-            });
-          });
-    },
     getData() {
       request({
-        url: `${BACKEND}/dataservice/account/accountList`,
-        // url: `${BACKEND}/dataservice/history/historyList`,
+        url: `${BACKEND}/dataservice/history/historyList`,
         method: "get",
       }).then((res) => {
         this.tableData = res.data.list;
         this.pageTotal = 1;
-      });
-    },
-    handleVerify(index) {
-      request({
-        url: `${BACKEND}/dataservice/account/verify?username=${this.tableData[index].username}`,
-        method: "post",
-      }).then((response) => {
-        if (response.success) {
-          this.$message.success("验证成功");
-          this.tableData[index].verification = 1;
-        } else {
-          this.$message.error(response.message);
-        }
       });
     },
     handleDelete(index) {
@@ -211,7 +113,7 @@ export default {
       })
           .then(() =>
               request({
-                url: `${BACKEND}/dataservice/account/delete?username=${this.tableData[index].username}`,
+                url: `${BACKEND}/dataservice/history/delete?username=${this.tableData[index].username}`,
                 method: "delete",
               }).then(() => {
                 this.$message.success("删除成功");
@@ -248,12 +150,6 @@ export default {
           .catch(() => {
           });
     },
-    // TODO:
-    // 分页导航
-    // handlePageChange(val) {
-    //   this.$set(this.query, "pageIndex", val);
-    //   this.getData();
-    // },
   },
 };
 </script>

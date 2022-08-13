@@ -5,7 +5,7 @@
             <i v-if="!collapse" class="el-icon-s-fold"></i>
             <i v-else class="el-icon-s-unfold"></i>
         </div>
-        <div class="logo">LTE网络干扰分析系统</div>
+        <div class="logo">智慧农业信息系统</div>
         <div class="header-right">
             <div class="header-user-con">
                 <!-- 用户名下拉菜单 -->
