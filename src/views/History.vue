@@ -49,7 +49,7 @@
             width="105"
             align="center"
         ></el-table-column>
-        <el-table-column prop="recordTime" label="采集时间" align="center"></el-table-column>
+        <el-table-column prop="recordTime" label="采集时间" width="225" align="center"></el-table-column>
         <el-table-column prop="temp" label="温度" align="center"></el-table-column>
         <el-table-column prop="humidity" label="湿度" align="center"></el-table-column>
         <el-table-column prop="motor" label="电机" align="center"></el-table-column>
@@ -92,6 +92,7 @@ export default {
     };
   },
   created() {
+    // console.log("hahaha");  //  这个会在浏览器f12的控制台中输出
     this.getData();
   },
   methods: {
@@ -113,7 +114,7 @@ export default {
       })
           .then(() =>
               request({
-                url: `${BACKEND}/dataservice/history/delete?username=${this.tableData[index].username}`,
+                url: `${BACKEND}/dataservice/history/delete?equipmentId=${this.tableData[index].equipmentId}&recordTime=${this.tableData[index].recordTime}`,
                 method: "delete",
               }).then(() => {
                 this.$message.success("删除成功");
@@ -126,6 +127,7 @@ export default {
     // 多选操作
     handleSelectionChange(val) {
       this.multipleSelection = val;
+      // console.log(this.multipleSelection);
     },
     delAllSelection() {
       this.$confirm("确定要删除吗？", "提示", {
@@ -136,7 +138,7 @@ export default {
           .then(() => {
             this.multipleSelection.forEach((item) =>
                 request({
-                  url: `${BACKEND}/dataservice/account/delete?username=${item.username}`,
+                  url: `${BACKEND}/dataservice/history/delete?equipmentId=${item.equipmentId}&recordTime=${item.recordTime}`,
                   method: "delete",
                 })
             );

@@ -105,16 +105,14 @@
                 class="green"
                 @click="handleVerify(scope.$index, scope.row)"
             >通过
-            </el-button
-            >
+            </el-button>
             <el-button
                 type="text"
                 icon="el-icon-delete"
                 class="red"
                 @click="handleDelete(scope.$index, scope.row)"
             >删除
-            </el-button
-            >
+            </el-button>
           </template>
         </el-table-column>
       </el-table>

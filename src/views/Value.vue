@@ -3,237 +3,222 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-s-order"></i> 业务查询
+          <i class="el-icon-s-order"></i> 阈值查询
         </el-breadcrumb-item>
-        <el-breadcrumb-item>tbCellA</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="container">
       <div class="handle-box">
         <el-form :inline="true" model="formdata">
-          <!-- <el-button icon="el-icon-download" @click="handleExport"
-            >导出文件</el-button
-          > -->
           <el-form-item>
             <el-select v-model="select.type" clearable placeholder="查询依据">
-              <el-option label="小区ID" :value="1"></el-option>
-              <el-option label="小区名称" :value="2"></el-option>
-              <el-option label="小区所属基站标识" :value="3"></el-option>
+              <el-option label="设备ID" :value="1"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input
-              v-model="query.sectorID"
-              v-if="select.type === 1"
-              placeholder="小区ID"
-              @change="sectorIDSet"
-            >
-            </el-input>
+            <!--  下面v-if的1 和label="设备ID" :value="1" 的value这个1对应 -->
             <el-select
-              v-model="query.sectorName"
-              v-else-if="select.type === 2"
-              filterable
-              placeholder="小区名称"
-              @change="sectorNameSet"
+                v-model="query.equipId"
+                v-if="select.type === 1"
+                placeholder="设备ID"
+                @change="handleSearch"
             >
               <el-option
-                v-for="item in sectorName"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
-            <el-select
-              v-model="query.eNodeBID"
-              v-else-if="select.type === 3"
-              filterable
-              placeholder="小区所属基站标识"
-              @change="eNodeBIDSet"
-            >
-              <el-option
-                v-for="item in eNodeBList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                  v-for="item in equipmentId"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
               >
               </el-option>
             </el-select>
           </el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleSearch"
-            >查询信息</el-button
-          >
+
           <el-button
-            type="info"
-            icon="el-icon-refresh"
-            class="button"
-            @click="getData"
-            >刷新</el-button
+              type="info"
+              icon="el-icon-refresh"
+              class="button"
+              @click="getData"
+          >刷新
+          </el-button
           >
+          <el-button type="primary" icon="el-icon-edit" @click="showForm">添加 / 修改</el-button>
+          <!--          <el-button type="primary" icon="el-icon-edit" @click="dialogFormVisible = true"></el-button>-->
+          <!--          <el-button type="primary" @click= "addBatch()">保存全部</el-button>-->
+
         </el-form>
       </div>
       <el-table
-        v-show="!table.hidden"
-        :data="table.data"
-        border
-        height="900"
-        class="table"
-        ref="multipleTable"
-        header-cell-class-name="table-header"
-        @selection-change="handleSelectionChange"
+          :data="tableData"
+          border
+          class="table"
+          ref="multipleTable"
+          header-cell-class-name="table-header"
       >
+<!--        <el-table-column-->
+<!--            type="selection"-->
+<!--            width="55"-->
+<!--            align="center"-->
+<!--        ></el-table-column>-->
         <el-table-column
-          prop="city"
-          label="地区名称"
-          align="center"
+            prop="id"
+            label="设备ID"
+            width="105"
+            align="center"
         ></el-table-column>
         <el-table-column
-          prop="sectorId"
-          label="小区ID"
-          align="center"
+            prop="areaId"
+            label="区域ID"
+            width="105"
+            align="center"
         ></el-table-column>
-        <el-table-column
-          prop="sectorName"
-          label="小区名称"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="enodebid"
-          label="小区所属基站标识"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="enodebName"
-          label="基站名称"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="earfcn"
-          label="小区频点编号"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="pci"
-          label="物理小区标识"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="pss"
-          label="主同步信号标识"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="sss"
-          label="辅同步信号标识"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="tac"
-          label="跟踪区编码"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="vendor"
-          label="设备厂家"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="longitude"
-          label="基站经度"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="latitude"
-          label="基站纬度"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="style"
-          label="基站类型"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="azimuth"
-          label="天线方位角"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="height"
-          label="天线高度"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="electtilt"
-          label="天线电下倾角"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="mechtilt"
-          label="天线机械下倾角"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="totletilt"
-          label="总下倾角"
-          align="center"
-        ></el-table-column>
+        <el-table-column prop="description" label="描述" align="center"></el-table-column>
+        <el-table-column prop="tempMax" label="温度最大值" align="center"></el-table-column>
+        <el-table-column prop="humiMax" label="湿度最大值" align="center"></el-table-column>
+        <el-table-column prop="tempMin" label="温度最小值" align="center"></el-table-column>
+        <el-table-column prop="humiMin" label="湿度最小值" align="center"></el-table-column>
+        <el-table-column label="操作" width="180" align="center">
+          <template #default="scope">
+            <el-button
+                type="text"
+                icon="el-icon-edit"
+                class="green"
+                @click="handleEdit(scope.$index, scope.row)"
+            >编辑
+            </el-button>
+            <el-button
+                type="text"
+                icon="el-icon-delete"
+                class="red"
+                @click="handleDelete(scope.$index, scope.row)"
+            >删除
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
+
+    <!--   下面的是element-ui官网的源代码。-->
+    <!-- 有一个代码版本的(vue3.x)原本有个template标签，但是被我删了才正常显示;-->
+    <!--    使用 <template> 标签在页面加载时该标签中的内容不会显示，加载后可以使用 JavaScript 来显示它-->
+    <el-dialog v-model="dialogFormVisible" title="新增一个阈值信息">
+      <el-form :model="form">
+        <el-form-item label="设备ID" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="区域ID" :label-width="formLabelWidth">
+          <el-input v-model="form.area" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="描述" :label-width="formLabelWidth">
+          <el-input v-model="form.desc" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="温度最大值" :label-width="formLabelWidth">
+          <el-input v-model="form.tempMax" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="湿度最大值" :label-width="formLabelWidth">
+          <el-input v-model="form.humiMax" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="温度最小值" :label-width="formLabelWidth">
+          <el-input v-model="form.tempMin" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="湿度最小值" :label-width="formLabelWidth">
+          <el-input v-model="form.humiMin" autocomplete="off"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="addRow()"
+        >确认</el-button
+        >
+      </span>
+      </template>
+    </el-dialog>
+
+
   </div>
 </template>
 
+<!--之前的项目中，下一行的标签只是script，有一个element-ui的模板(vue3.x)需要写lang="ts" setup，否则报错-->
 <script>
-import { BACKEND } from "../utils/backend";
-import request from "../utils/request";
+import {BACKEND} from "@/utils/backend";
+import request from "../utils/request.js";
+
 export default {
   data() {
     return {
-      query: {
-        sectorID: "",
-        sectorName: "",
-        eNodeBID: "",
+      dialogFormVisible: false,
+      form: {
+        name: '',
+        area: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: '',
+        tempMax: '',
+        tempMin: '',
+        humiMax: '',
+        humiMin: ''
       },
-      select: { type: "" },
-      table: { data: [], hidden: true },
-      eNodeBList: [],
-      sectorName: [],
+      formLabelWidth: '120px',
+      tableData: [],
+      query: {
+        equipId: ""
+      },
+      select: {type: ""},
+      table: {data: [], hidden: true},
+      equipmentId: [],
+      roleInfo: [],
     };
   },
   created() {
     this.getData();
   },
-  methods: {
-    handleExport() {
-      window.location.href = `${BACKEND}/dataservice/tb-cell/export`;
+  methods: {   // 你自己自定义的那些函数要写在这里面！！
+    showForm() {
+      this.dialogFormVisible = true;
+      // this.form.name = "dollar";
     },
-    getData() {
+    addRow() {
+      // console.log(this.form.humiMin);
       request({
-        url: `${BACKEND}/dataservice/tb-cell/eNodeBList`,
-        method: "get",
+        url: `${BACKEND}/dataservice/value/editValue?id=${this.form.name}&areaId=${this.form.area}&desc=${this.form.desc}&tempMax=${this.form.tempMax}&tempMin=${this.form.tempMin}&humiMax=${this.form.humiMax}&humiMin=${this.form.humiMin}`,
+        method: "post",
       }).then((response) => {
         if (response.success) {
-          this.eNodeBList = [];
-          let len = response.data.eNodeBList.length;
-          for (let i = 0; i < len; i++) {
-            let pair = response.data.eNodeBList[i].split(":");
-            this.eNodeBList.push({ value: pair[0], label: pair[1] });
-          }
+          this.tableData = response.data.list;
+          this.$message({
+            message: "编辑成功",
+            type: "success",
+          });
+
         } else {
           this.$message.error(response.message);
         }
       });
-
+      this.dialogFormVisible = false;
+      console.log(this.query.equipId);
+      // this.getData();
+      // setTimeout(this.handleSearch(),3000);
+    },
+    // 多选操作
+    // handleSelectionChange(val) {
+    //   this.multipleSelection = val;
+    // },
+    getData() {
       request({
-        url: `${BACKEND}/dataservice/tb-cell/sectorNameList`,
+        url: `${BACKEND}/dataservice/value/valueList`,
         method: "get",
       }).then((response) => {
         if (response.success) {
-          this.sectorName = [];
-          let len = response.data.sectorName.length;
+          this.equipmentId = [];
+          let len = response.data.list.length;
           for (let i = 0; i < len; i++) {
-            this.sectorName.push({
-              value: response.data.sectorName[i],
-              label: response.data.sectorName[i],
+            this.equipmentId.push({
+              value: response.data.list[i].id,
+              label: response.data.list[i].id,
             });
           }
         } else {
@@ -242,37 +227,134 @@ export default {
       });
     },
     handleSearch() {
-      if (this.select.type === 1) {
-        this.sectorIDSet();
-      } else if (this.select.type === 2) {
-        this.sectorNameSet();
-      } else if (this.select.type === 3) {
-        this.eNodeBIDSet();
-      }
       request({
-        url: `${BACKEND}/dataservice/tb-cell/sectorInfo?sectorId=${this.query.sectorID}&sectorName=${this.query.sectorName}&eNodeBID=${this.query.eNodeBID}`,
+        url: `${BACKEND}/dataservice/value/valueInfo?id=${this.query.equipId}`,
         method: "get",
       }).then((response) => {
         if (response.success) {
-          this.table.hidden = false;
-          this.table.data = response.data.sectorInfo;
+          this.tableData = response.data.list;
+          console.log(response.data);
+          console.log("查询成功");
         } else {
           this.$message.error(response.message);
         }
       });
     },
-    sectorIDSet() {
-      this.query.sectorName = "";
-      this.query.eNodeBID = "";
+    handleDelete(index) {
+      // 二次确认删除
+      this.$confirm("确定要删除吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+          .then(() =>
+              request({
+                url: `${BACKEND}/dataservice/value/delete?id=${this.tableData[index].id}`,
+                method: "delete",
+              }).then(() => {
+                this.$message.success("删除成功");
+                this.tableData.splice(index, 1);
+              })
+          )
+          .catch(() => {
+          });
     },
-    sectorNameSet() {
-      this.query.sectorID = "";
-      this.query.eNodeBID = "";
+    handleEdit(index) {
+      this.dialogFormVisible = true;
+      this.form.name = this.tableData[index].id;
+      this.form.area = this.tableData[index].areaId;
+      this.form.desc = this.tableData[index].description;
+      this.form.tempMax = this.tableData[index].tempMax;
+      this.form.tempMin = this.tableData[index].tempMin;
+      this.form.humiMax = this.tableData[index].humiMax;
+      this.form.humiMin = this.tableData[index].humiMin;
     },
-    eNodeBIDSet() {
-      this.query.sectorID = "";
-      this.query.sectorName = "";
-    },
+    //     先调用按钮修改dialogFormVisible为true
+    // 才能打开弹窗
+    // 添加用户
+
   },
 };
 </script>
+
+<style scoped>
+.el-button--text {
+  margin-right: 15px;
+}
+
+.el-select {
+  width: 300px;
+}
+
+.el-input {
+  width: 300px;
+}
+
+.dialog-footer button:first-child {
+  margin-right: 10px;
+}
+
+.option-card {
+  height: 250px;
+  width: 230px;
+}
+
+#title {
+  margin-top: 30px;
+}
+
+#upload {
+  margin-top: 100px;
+}
+
+#main,
+#body {
+  position: relative;
+  top: 50px;
+  left: 5%;
+  right: 5%;
+}
+
+.hrefButton {
+  position: absolute;
+  right: 10px;
+  bottom: 0px;
+}
+
+.handle-box {
+  margin-bottom: 20px;
+}
+
+.handle-select {
+  width: 120px;
+}
+
+.handle-input {
+  width: 300px;
+  display: inline-block;
+}
+
+.table {
+  width: 100%;
+  font-size: 14px;
+}
+
+.red {
+  color: #ff0000;
+}
+
+.green {
+  color: #67c23a;
+}
+
+.mr10 {
+  margin-right: 10px;
+}
+
+.table-td-thumb {
+  display: block;
+  margin: auto;
+  width: 40px;
+  height: 40px;
+}
+</style>

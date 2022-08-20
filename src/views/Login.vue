@@ -1,7 +1,7 @@
 <template>
   <div class="login-wrap">
     <div class="ms-login">
-      <div class="ms-title">LTE网络干扰分析系统</div>
+      <div class="ms-title">智慧农业信息采集控制系统</div>
       <el-form
         :model="formdata"
         :rules="rules"
